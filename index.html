@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tidy &amp; Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style id="st">
+:root{--bg:#f2f4ef;--panel:#fff;--ink:#14213d;--mut:#5b6678;--line:#d5dacf;--a:#0f8b8d;--b:#e9a23b;--c:#d1495b;--d:#4a5fc1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a2b;--panel:#17233a;--ink:#e8ecf4;--mut:#9aa6bb;--line:#2b3a57;--a:#3cc4c6;--b:#f0b55a;--c:#ef7284;--d:#8b9cf0}}
+:root[data-theme="dark"]{--bg:#101a2b;--panel:#17233a;--ink:#e8ecf4;--mut:#9aa6bb;--line:#2b3a57;--a:#3cc4c6;--b:#f0b55a;--c:#ef7284;--d:#8b9cf0}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;background-position:-1px -1px;color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 18px 64px}
+h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;margin:0;line-height:1.1}
+h1{font-size:clamp(2.6rem,8vw,5rem);font-weight:800;letter-spacing:-.03em}
+h1 span{color:var(--a)}
+.lede{max-width:52ch;color:var(--mut);margin:12px 0 28px;font-size:1.1rem}
+h2{font-size:1.4rem;font-weight:800;margin-bottom:12px}
+h3{font-size:1rem;font-weight:500;margin-bottom:10px}
+.panel{background:var(--panel);border:1px solid var(--ink);border-radius:6px;padding:20px;margin-bottom:20px}
+.drop{display:block;border:2px dashed var(--mut);border-radius:6px;padding:34px 16px;text-align:center;cursor:pointer}
+.drop:hover,.drop.on,.drop:focus-within{border-color:var(--a);background:color-mix(in srgb,var(--a) 8%,transparent)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+button{font:inherit;font-weight:500;background:var(--ink);color:var(--bg);border:0;border-radius:4px;padding:9px 16px;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 18px}
+.opts label{display:flex;gap:8px;align-items:center}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--ink);border-radius:4px;padding:6px}
+.rep{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 18px}
+.rep li{border-left:3px solid var(--a);padding-left:10px}
+.rep b{font-family:"Bricolage Grotesque",sans-serif;font-size:1.2rem}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:500;color:var(--mut)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:var(--panel)}
+.kpi b{display:block;font:800 2rem/1 "Bricolage Grotesque",sans-serif;color:var(--a)}
+.kpi span{color:var(--mut);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:6px;padding:14px;background:var(--panel);margin-bottom:16px}
+.grid .card{margin:0}
+.cv{position:relative;height:260px}
+.dashpage{max-width:1080px;margin:0 auto;padding:28px 18px}
+.dashpage h1{font-size:2.4rem;margin-bottom:18px}
+#msg,#bmsg{color:var(--c);margin-top:10px;min-height:1.4em}
+.builder{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+input[type=number]{font:inherit;width:90px;background:var(--panel);color:var(--ink);border:1px solid var(--ink);border-radius:4px;padding:6px}
+.rm{float:right;padding:2px 8px;font-size:.8rem}
+@media(prefers-reduced-motion:no-preference){.drop{transition:background .15s,border-color .15s}}
+@media print{body{background-image:none}button,.noprint{display:none!important}}
+</style></head>
+<body><main>
+<h1>Tidy <span>&amp;</span> Chart</h1>
+<p class="lede">Drop in a messy CSV. Get a cleaned file and a dashboard you can download.</p>
+
+<section class="panel" aria-labelledby="s1">
+<h2 id="s1">1. Add your data</h2>
+<label class="drop" id="drop"><input type="file" id="file" accept=".csv,.tsv,.txt">
+<strong>Choose a CSV file</strong> or drop it here<br><small style="color:var(--mut)">The first row must be column names. Your data stays in your browser.</small></label>
+<div class="row"><button class="ghost" id="smp">Try sample data</button></div>
+<div id="msg" role="status"></div>
+</section>
+
+<div id="work" hidden>
+<section class="panel" aria-labelledby="s2">
+<h2 id="s2">2. Clean</h2>
+<div class="opts">
+<label><input type="checkbox" id="o-hdr" checked> Tidy column names</label>
+<label><input type="checkbox" id="o-trim" checked> Trim extra spaces</label>
+<label><input type="checkbox" id="o-case" checked> Match text case (Title Case)</label>
+<label><input type="checkbox" id="o-empty" checked> Remove blank rows</label>
+<label><input type="checkbox" id="o-dup" checked> Remove duplicate rows</label>
+<label><input type="checkbox" id="o-out"> Remove outliers (1.5×IQR)</label>
+<label>Missing values <select id="o-miss"><option value="fill">Fill (mean / most common)</option><option value="drop">Drop the rows</option><option value="keep">Leave empty</option></select></label>
+</div>
+<h3 style="margin-top:18px">What changed</h3>
+<ul class="rep" id="rep"></ul>
+<h3 style="margin-top:18px">Cleaned preview (first 8 rows)</h3>
+<div class="scroll" id="prev"></div>
+<div class="row"><button id="dcsv">Download cleaned CSV</button></div>
+</section>
+
+<section class="panel" aria-labelledby="s3">
+<h2 id="s3">3. Dashboard</h2>
+<div class="builder">
+<h3>Filter</h3>
+<div class="opts">
+<label>Column <select id="f-col"><option value="">No filter</option></select></label>
+<label id="f-val-wrap" hidden>Value <select id="f-val"></select></label>
+<span id="f-rng" class="opts" hidden><label>Min <input type="number" id="f-min" step="any"></label><label>Max <input type="number" id="f-max" step="any"></label></span>
+<label><input type="checkbox" id="auto" checked> Show automatic charts</label>
+</div>
+<h3 style="margin-top:16px">Add your own chart</h3>
+<div class="opts">
+<label>Chart type <select id="c-type"><option value="bar">Bar</option><option value="line">Line</option><option value="pie">Pie</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select></label>
+<label>X (group by) <select id="c-x"></select></label>
+<label>Y (measure) <select id="c-y"></select></label>
+<label>Calculation <select id="c-agg"><option value="count">Count</option><option value="sum">Sum</option><option value="mean">Average</option><option value="median">Median</option><option value="min">Min</option><option value="max">Max</option></select></label>
+<label>Show top <select id="c-top"><option value="10">10</option><option value="5">5</option><option value="20">20</option><option value="0">All</option></select></label>
+<label>Sort <select id="c-sort"><option value="hi">Highest first</option><option value="lo">Lowest first</option><option value="az">A to Z</option><option value="orig">Order in data</option></select></label>
+</div>
+<div class="row"><button id="c-add">Add chart</button><button class="ghost" id="c-clear">Remove my charts</button></div>
+<div id="bmsg" role="status"></div>
+</div>
+<div id="dash"></div>
+<div class="row"><button id="dhtml">Download dashboard (HTML)</button><button class="ghost" id="prt">Print or save as PDF</button></div>
+</section>
+</div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body></html>
